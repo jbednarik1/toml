@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"bytes"
 )
 
 type tomlEncodeError struct{ error }
@@ -37,6 +38,16 @@ var quotedReplacer = strings.NewReplacer(
 	"\"", "\\\"",
 	"\\", "\\\\",
 )
+
+func Marshal(val interface{}) (out []byte, err error) {
+	var buf bytes.Buffer
+	enc := NewEncoder(&buf)
+	err = enc.Encode(val)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
 
 // Encoder controls the encoding of Go values to a TOML document to some
 // io.Writer.
